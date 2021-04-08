@@ -47,19 +47,19 @@ from .model import CPPNVAE
 
 
 class Sampler:
-    def __init__(self, model, _dataset=None):  # @look
-        self.model = model
+    def __init__(self, vae, _dataset=None):  # @look
+        self._model = vae
         if _dataset:
-            self.dataset = _dataset
+            self._dataset = _dataset
         else:
-            self.dataset = dataset.read_data_sets()
+            self._dataset = dataset.read_data_sets()
         self.z = self.generate_z()
 
     def get_random_mnist(self, with_label=False):
         if with_label == True:
-            data, label = self.dataset.next_batch(1, with_label)
+            data, label = self._dataset.next_batch(1, with_label)
             return data[0], label[0]
-        return self.dataset.next_batch(1)[0]
+        return self._dataset.next_batch(1)[0]
 
     def get_random_specific_mnist(self, label=2):
         m, l = self.get_random_mnist(with_label=True)
@@ -75,20 +75,20 @@ class Sampler:
         self.show_image_from_z(self.encode(m))
 
     def generate_z(self):
-        z = np.random.normal(size=self.model.z_dim).astype(np.float32)
+        z = np.random.normal(size=self._model.z_dim).astype(np.float32)
         return z
 
     def encode(self, mnist_data):
         new_shape = [1] + list(mnist_data.shape)
-        return self.model.encode(np.reshape(mnist_data, new_shape))
+        return self._model.encode(np.reshape(mnist_data, new_shape))
 
     def generate(self, z=None, x_dim=512, y_dim=512, scale=8.0):
         if z is None:
             z = self.generate_z()
         else:
-            z = np.reshape(z, (1, self.model.z_dim))
+            z = np.reshape(z, (1, self._model.z_dim))
         self.z = z
-        return self.model.generate(z, x_dim, y_dim, scale)[0]
+        return self._model.generate(z, x_dim, y_dim, scale)[0]
 
     def show_image(self, image_data):
         """
@@ -98,7 +98,7 @@ class Sampler:
         plt.subplot(1, 1, 1)
         y_dim = image_data.shape[0]
         x_dim = image_data.shape[1]
-        c_dim = self.model.c_dim
+        c_dim = self._model.c_dim
         if c_dim > 1:
             plt.imshow(image_data, interpolation="nearest")
         else:
@@ -115,7 +115,7 @@ class Sampler:
         img_data = np.array(1 - image_data)
         y_dim = image_data.shape[0]
         x_dim = image_data.shape[1]
-        c_dim = self.model.c_dim
+        c_dim = self._model.c_dim
         if c_dim > 1:
             img_data = np.array(
                 img_data.reshape((y_dim, x_dim, c_dim)) * 255.0, dtype=np.uint8
@@ -134,7 +134,7 @@ class Sampler:
         img_data = np.array(1 - image_data)
         y_dim = image_data.shape[0]
         x_dim = image_data.shape[1]
-        c_dim = self.model.c_dim
+        c_dim = self._model.c_dim
         if c_dim > 1:
             img_data = np.array(
                 img_data.reshape((y_dim, x_dim, c_dim)) * 255.0, dtype=np.uint8
