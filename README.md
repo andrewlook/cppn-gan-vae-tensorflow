@@ -78,3 +78,4 @@ Used images2gif.py written by Almar Klein, Ant1, Marius van Voorden.
 BSD - images2gif.py
 
 MIT - everything else
+ 
