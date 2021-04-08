@@ -17,6 +17,13 @@ usage:
 
 %run -i sampler.py
 
+###
+mgc = get_ipython().magic
+mgc(u"matplotlib inline")
+mgc(u"run -i dataset.py")
+pylab.rcParams["figure.figsize"] = (10.0, 10.0)
+###
+
 dataset = read_data_sets(train_dir='data/mnist')
 model = CPPNVAE()
 model.load_model('save/mnist')
@@ -35,14 +42,8 @@ import pylab
 import tensorflow as tf
 from PIL import Image
 
-import dataset
-import images2gif
-from model import CPPNVAE
-
-mgc = get_ipython().magic
-mgc(u"matplotlib inline")
-mgc(u"run -i dataset.py")
-pylab.rcParams["figure.figsize"] = (10.0, 10.0)
+from . import dataset
+from .model import CPPNVAE
 
 
 class Sampler:

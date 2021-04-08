@@ -8,8 +8,8 @@ from PIL import Image
 from six import BytesIO, StringIO
 from six.moves import cPickle
 
-import dataset
-from model import CPPNVAE
+from . import dataset
+from .model import CPPNVAE
 
 """
 cppn vae:

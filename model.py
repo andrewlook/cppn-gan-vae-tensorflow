@@ -5,7 +5,7 @@ from datetime import datetime
 import numpy as np
 import tensorflow as tf
 
-from ops import *
+from .ops import *
 
 """
 cppgan-vae
@@ -84,6 +84,7 @@ class CPPNVAE:
         self.model_name = model_name
         self.keep_prob = keep_prob
         self.df_dim = df_dim
+        self.logdir = logdir
 
         # tf Graph batch of image (batch_size, height, width, depth)
         self.batch = tf.placeholder(tf.float32, [batch_size, x_dim, y_dim, c_dim])
