@@ -457,28 +457,25 @@ class CPPNVAE:
         )
         return image
 
-    def save_model(self, checkpoint_path, epoch):
-        """ saves the model to a file. """
-        self.saver.save(self.sess, checkpoint_path, global_step=epoch)
+    def save_model(self, save_dir, epoch):
+        self.saver.save(self.sess, save_dir, global_step=epoch)
 
-    def load_model(self, checkpoint_path, model_version_to_load=None):
-
-        ckpt = tf.train.get_checkpoint_state(checkpoint_path)
-        print("found model: ", ckpt)  # @look: TODO support alt checkpoint paths?
+    def load_model(self, save_dir, model_version_to_load=None):
+        ckpt = tf.train.get_checkpoint_state(save_dir)
+        print("found model: ", ckpt)
 
         model_checkpoint_path = ckpt.model_checkpoint_path
 
         if model_version_to_load:
-            if model_version_to_load not in ckpt.all_model_checkpoint_paths:
-                raise Exception(
-                    "error, please request one of: %s" % ckpt.all_model_checkpoint_paths
-                )
-            model_checkpoint_path = model_version_to_load
+            model_checkpoint_path = os.path.join(
+                save_dir, f"model.ckpt-{model_version_to_load}"
+            )
+            if not os.path.isfile(model_checkpoint_path + ".meta"):
+                raise Exception(f"not a file: {model_checkpoint_path}.meta")
+            if model_checkpoint_path not in ckpt.all_model_checkpoint_paths:
+                raise Exception(f"request one of: {ckpt.all_model_checkpoint_paths}")
 
-        # use the below line for tensorflow 0.7
-        print(
-            "loading model checkpoint: ", model_checkpoint_path
-        )  # @look: TODO support alt checkpoint paths?
+        print(f"loading model checkpoint: {model_checkpoint_path}")
         self.saver.restore(self.sess, model_checkpoint_path)
 
     def close(self):
